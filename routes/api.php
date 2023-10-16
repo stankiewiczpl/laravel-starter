@@ -1,6 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\UserController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +17,11 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'auth'], function (Router $router){
+    $router->post('login', LoginController::class)->name('api.auth.login');
+    $router->post('register', RegisterController::class)->name('api.auth.register');
+    $router->group(['middleware' => 'auth:api'], function (Router $router){
+        $router->get('user', UserController::class)->name('api.auth.user');
+        $router->post('logout', LogoutController::class)->name('api.auth.logout');
+    });
 });

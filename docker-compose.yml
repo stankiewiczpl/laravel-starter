@@ -1,0 +1,33 @@
+services:
+  mysql:
+    image: docker.io/bitnami/mariadb:11.0
+    container_name: laravel-starter-db
+    environment:
+      MARIADB_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MARIADB_ROOT_HOST: "%"
+      MARIADB_DATABASE: '${DB_DATABASE}'
+      MARIADB_USER: '${DB_USERNAME}'
+      MARIADB_PASSWORD: '${DB_PASSWORD}'
+      MARIADB_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+        - 'laravel-starter-db-mysql:/var/lib/mysql'
+  web:
+    container_name: laravel-starter-web
+    image: docker.io/bitnami/laravel:10
+    environment:
+        DB_HOST: '${DB_HOST}'
+        DB_PORT: 3306
+        DB_USERNAME: '${DB_USERNAME}'
+        DB_DATABASE: '${DB_DATABASE}'
+        DB_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - '.:/app'
+    depends_on:
+      - mysql
+networks:
+  default:
+    external:
+      name: npm_network
+volumes:
+    laravel-starter-db-mysql:
+        driver: local
